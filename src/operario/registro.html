@@ -42,6 +42,15 @@
             </select>
           </div>
           <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Tipo de Registro</label>
+            <select id="filtroTipo" class="input-field text-xs text-black">
+              <option value="">Todos</option>
+              <option value="inicial">Operación Inicial</option>
+              <option value="pastillas">Registro Pastillas</option>
+              <option value="finalizacion">Finalización</option>
+            </select>
+          </div>
+          <div>
             <label class="block text-xs font-semibold mb-1 text-black">Fecha</label>
             <div class="flex gap-2">
               <input type="date" id="filtroFechaDesde" class="input-field text-xs text-black" placeholder="Desde" />
@@ -72,5 +81,36 @@
     <footer id="footer"></footer>
   </div>
   <script type="module" src="registro.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const closeMobileMenu = document.getElementById('closeMobileMenu');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      const logoutMobile = document.getElementById('logoutMobile');
+      if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.onclick = () => mobileMenu.classList.remove('hidden');
+      }
+      if (closeMobileMenu && mobileMenu) {
+        closeMobileMenu.onclick = () => mobileMenu.classList.add('hidden');
+      }
+      if (overlay && mobileMenu) {
+        overlay.onclick = () => mobileMenu.classList.add('hidden');
+      }
+      // Cerrar menú al hacer click en un link
+      if (mobileMenu) {
+        mobileMenu.querySelectorAll('a').forEach(link => {
+          link.onclick = () => mobileMenu.classList.add('hidden');
+        });
+      }
+      // Logout desde el menú mobile
+      if (logoutMobile) {
+        logoutMobile.onclick = () => {
+          localStorage.removeItem('user');
+          window.location.href = '../login/login.html';
+        };
+      }
+    });
+  </script>
 </body>
 </html>

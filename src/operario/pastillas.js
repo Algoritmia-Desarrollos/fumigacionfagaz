@@ -161,7 +161,7 @@ btnRegistrar.addEventListener('click', () => {
     alert('No hay suficiente stock de pastillas en el depósito ' + depositoSeleccionado + '.');
     return;
   }
-  // Guardar SIEMPRE como nuevo registro independiente
+  // Crear un nuevo registro histórico de pastillas
   const id = localStorage.getItem('operacion_actual');
   let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
   const opBase = operaciones.find(op => op.id === id);
@@ -169,6 +169,8 @@ btnRegistrar.addEventListener('click', () => {
     alert('No se encontró la operación base.');
     return;
   }
+  
+  // Crear nuevo registro histórico
   const nuevoRegistro = {
     ...opBase,
     deposito: depositoSeleccionado,
@@ -176,11 +178,13 @@ btnRegistrar.addEventListener('click', () => {
     tratamiento: tratamiento.value,
     toneladas: modalidad.value === 'trasilado' ? Number(toneladasInput.value) : (Number(camionesInput.value) * 28),
     camiones: modalidad.value === 'descarga' ? Number(camionesInput.value) : undefined,
-    pastillas,
+    pastillas: pastillas,
     created_at: Date.now(),
     id: Date.now().toString() + Math.floor(Math.random()*1000),
+    tipo_registro: 'pastillas', // Identificar que es un registro de pastillas
     estado: opBase.estado // mantiene el estado actual (en curso o finalizada)
   };
+  
   // Insertar el nuevo registro al principio del array para que sea el más reciente
   operaciones.unshift(nuevoRegistro);
   localStorage.setItem('operaciones', JSON.stringify(operaciones));

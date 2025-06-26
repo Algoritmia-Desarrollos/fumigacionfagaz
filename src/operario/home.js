@@ -18,7 +18,7 @@ function setOperaciones(ops) {
 }
 
 function renderOperaciones() {
-  const ops = getOperaciones().filter(op => op.estado !== 'finalizada');
+  const ops = getOperaciones().filter(op => op.estado !== 'finalizada' && (!op.tipo_registro || op.tipo_registro === 'inicial'));
   if (ops.length === 0) {
     operacionesList.innerHTML = '<p class="text-[var(--text-secondary)]">No hay operaciones en curso.</p>';
     return;

@@ -107,11 +107,19 @@ function renderTabla(filtros = {}) {
   if (filtros.estado) {
     operaciones = operaciones.filter(op => (op.estado || '').toLowerCase() === filtros.estado.toLowerCase());
   }
+  // Filtrar por tipo de registro
+  if (filtros.tipo) {
+    operaciones = operaciones.filter(op => {
+      const tipoRegistro = op.tipo_registro || 'inicial';
+      return tipoRegistro === filtros.tipo;
+    });
+  }
   const table = document.createElement('table');
   table.className = 'min-w-full divide-y divide-[var(--border-color)]';
   table.innerHTML = `
     <thead>
       <tr>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-[var(--muted-text-color)] uppercase">Tipo</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-[var(--muted-text-color)] uppercase">Cliente</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-[var(--muted-text-color)] uppercase">Mercadería</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-[var(--muted-text-color)] uppercase">Fecha de Registro</th>
@@ -123,21 +131,33 @@ function renderTabla(filtros = {}) {
       </tr>
     </thead>
     <tbody>
-      ${operaciones.map(op => `
-        <tr class="hover:bg-[var(--border-color)] cursor-pointer" data-id="${op.id}" data-estado="${op.estado || 'en curso'}">
-          <td class="px-4 py-2">${op.cliente || '-'}</td>
-          <td class="px-4 py-2">${op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-'}</td>
-          <td class="px-4 py-2">
-            <div>${new Date(op.created_at || Date.now()).toLocaleString('es-AR')}</div>
-            <div class="text-xs text-[var(--muted-text-color)]">Registro creado el ${new Date(op.created_at || Date.now()).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
-          </td>
-          <td class="px-4 py-2">${op.deposito || '-'}</td>
-          <td class="px-4 py-2">${op.modalidad ? op.modalidad.charAt(0).toUpperCase() + op.modalidad.slice(1) : ''}</td>
-          <td class="px-4 py-2">${op.tratamiento ? op.tratamiento.charAt(0).toUpperCase() + op.tratamiento.slice(1) : ''}</td>
-          <td class="px-4 py-2">${typeof op.pastillas === 'number' ? op.pastillas : ''}</td>
-          <td class="px-4 py-2">${op.estado || 'en curso'}</td>
-        </tr>
-      `).join('')}
+      ${operaciones.map(op => {
+        const tipoRegistro = op.tipo_registro || 'inicial';
+        const tipoText = tipoRegistro === 'pastillas' ? 'Registro Pastillas' : 
+                        tipoRegistro === 'finalizacion' ? 'Finalización' : 'Operación Inicial';
+        const tipoClass = tipoRegistro === 'pastillas' ? 'bg-blue-100 text-blue-800' : 
+                         tipoRegistro === 'finalizacion' ? 'bg-red-100 text-red-800' : 
+                         'bg-green-100 text-green-800';
+        
+        return `
+          <tr class="hover:bg-[var(--border-color)] cursor-pointer" data-id="${op.id}" data-estado="${op.estado || 'en curso'}">
+            <td class="px-4 py-2">
+              <span class="px-2 py-1 text-xs font-medium rounded-full ${tipoClass}">${tipoText}</span>
+            </td>
+            <td class="px-4 py-2">${op.cliente || '-'}</td>
+            <td class="px-4 py-2">${op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-'}</td>
+            <td class="px-4 py-2">
+              <div>${new Date(op.created_at || Date.now()).toLocaleString('es-AR')}</div>
+              <div class="text-xs text-[var(--muted-text-color)]">Registro creado el ${new Date(op.created_at || Date.now()).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+            </td>
+            <td class="px-4 py-2">${op.deposito || '-'}</td>
+            <td class="px-4 py-2">${op.modalidad ? op.modalidad.charAt(0).toUpperCase() + op.modalidad.slice(1) : ''}</td>
+            <td class="px-4 py-2">${op.tratamiento ? op.tratamiento.charAt(0).toUpperCase() + op.tratamiento.slice(1) : ''}</td>
+            <td class="px-4 py-2">${typeof op.pastillas === 'number' ? op.pastillas : ''}</td>
+            <td class="px-4 py-2">${op.estado || 'en curso'}</td>
+          </tr>
+        `;
+      }).join('')}
     </tbody>
   `;
   const cont = document.getElementById('operacionesTable');
@@ -169,6 +189,7 @@ const filtroTratamiento = document.getElementById('filtroTratamiento');
 const filtroFechaDesde = document.getElementById('filtroFechaDesde');
 const filtroFechaHasta = document.getElementById('filtroFechaHasta');
 const filtroEstado = document.getElementById('filtroEstado');
+const filtroTipo = document.getElementById('filtroTipo');
 const btnLimpiarFiltros = document.getElementById('btnLimpiarFiltros');
 
 function aplicarFiltros() {
@@ -180,7 +201,8 @@ function aplicarFiltros() {
     tratamiento: filtroTratamiento ? filtroTratamiento.value : '',
     fechaDesde: filtroFechaDesde ? filtroFechaDesde.value : '',
     fechaHasta: filtroFechaHasta ? filtroFechaHasta.value : '',
-    estado: filtroEstado ? filtroEstado.value : ''
+    estado: filtroEstado ? filtroEstado.value : '',
+    tipo: filtroTipo ? filtroTipo.value : ''
   });
 }
 
@@ -192,6 +214,7 @@ if (filtroTratamiento) filtroTratamiento.addEventListener('change', aplicarFiltr
 if (filtroFechaDesde) filtroFechaDesde.addEventListener('change', aplicarFiltros);
 if (filtroFechaHasta) filtroFechaHasta.addEventListener('change', aplicarFiltros);
 if (filtroEstado) filtroEstado.addEventListener('change', aplicarFiltros);
+if (filtroTipo) filtroTipo.addEventListener('change', aplicarFiltros);
 if (btnLimpiarFiltros) btnLimpiarFiltros.addEventListener('click', () => {
   if (filtroCliente) filtroCliente.value = '';
   if (filtroMercaderia) filtroMercaderia.value = '';
@@ -201,6 +224,7 @@ if (btnLimpiarFiltros) btnLimpiarFiltros.addEventListener('click', () => {
   if (filtroFechaDesde) filtroFechaDesde.value = '';
   if (filtroFechaHasta) filtroFechaHasta.value = '';
   if (filtroEstado) filtroEstado.value = '';
+  if (filtroTipo) filtroTipo.value = '';
   aplicarFiltros();
 });
 

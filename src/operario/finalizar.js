@@ -56,21 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-        let nuevaOperacion = null;
-        let encontrada = false;
+        const opBase = operaciones.find(op => op.id === id);
+        if (!opBase) {
+          alert('No se encontró la operación actual.');
+          return;
+        }
+        // Marcar como finalizadas todas las operaciones en curso con el mismo cliente, tipo de área y silo/celda
         operaciones = operaciones.map(op => {
-          if (op.id === id) {
-            encontrada = true;
-            nuevaOperacion = {
-              ...op,
-              estado: 'finalizada',
-              fecha_cierre: Date.now(),
-              created_at: Date.now(),
-              id: Date.now().toString() + Math.floor(Math.random()*1000),
-              modalidad: '',
-              tratamiento: '',
-              pastillas: null
-            };
+          if (
+            op.estado === 'en curso' &&
+            op.cliente === opBase.cliente &&
+            op.area_tipo === opBase.area_tipo &&
+            ((op.area_tipo === 'silo' && op.silo === opBase.silo) || (op.area_tipo === 'celda' && op.celda === opBase.celda))
+          ) {
             return {
               ...op,
               estado: 'finalizada',
@@ -79,13 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           return op;
         });
-        if (!encontrada) {
-          alert('No se encontró la operación actual.');
-          return;
-        }
-        if (nuevaOperacion) {
-          operaciones.unshift(nuevaOperacion);
-        }
+        // Crear nuevo registro histórico de finalización
+        const nuevoRegistro = {
+          ...opBase,
+          estado: 'finalizada',
+          fecha_cierre: Date.now(),
+          created_at: Date.now(),
+          id: Date.now().toString() + Math.floor(Math.random()*1000),
+          tipo_registro: 'finalizacion' // Identificar que es un registro de finalización
+        };
+        // Insertar el nuevo registro al principio del array
+        operaciones.unshift(nuevoRegistro);
         localStorage.setItem('operaciones', JSON.stringify(operaciones));
         localStorage.removeItem('operacion_actual');
         alert('Operación finalizada correctamente.');
