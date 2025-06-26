@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fagaz - Operaciones</title>
+  <link rel="manifest" href="../../public/manifest.json" />
+  <link rel="stylesheet" href="../common/styles.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+</head>
+<body class="bg-[var(--background-light)]">
+  <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+    <header id="header"></header>
+    <main class="px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-8">
+      <div class="flex flex-col w-full max-w-7xl">
+        <h2 class="text-3xl font-bold mb-6">Operaciones</h2>
+        <div class="bg-white rounded-lg shadow p-6 border border-[var(--border-light)]">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Fecha y Hora</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Operario</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Cliente</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Depósito</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Área</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Mercadería</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tipo Tratamiento</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Toneladas</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pastillas</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Estado</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 text-sm whitespace-nowrap">2024-07-26 10:00</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Carlos Ramirez</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">AgroExport S.A.</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Depósito A</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Campo 1</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Maíz</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Preventivo</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">100</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">500</td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-700">Completada</span>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <a class="text-[var(--primary-color)] hover:text-[var(--secondary-color)] text-sm font-medium flex items-center gap-1" href="operacion_detalle.html">
+                    <span class="material-icons text-base">visibility</span> Ver Detalles
+                  </a>
+                </td>
+              </tr>
+              <!-- Más filas de ejemplo -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+  <script type="module" src="operaciones.js"></script>
+</body>
+</html>

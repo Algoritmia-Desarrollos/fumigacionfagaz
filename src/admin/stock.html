@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fagaz - Stock</title>
+  <link rel="manifest" href="../../public/manifest.json" />
+  <link rel="stylesheet" href="../common/styles.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+<body class="bg-[var(--background-light)]">
+  <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+    <header id="header"></header>
+    <main class="px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-8">
+      <div class="flex flex-col w-full max-w-3xl">
+        <h2 class="text-3xl font-bold mb-6">Stock de Pastillas</h2>
+        <div class="bg-white rounded-lg shadow p-6 border border-[var(--border-light)]">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Depósito</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Stock Actual</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Ajuste Manual</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Baigorria</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">2,500</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">
+                  <button class="btn-secondary rounded px-4 py-2 text-sm font-medium">Ajustar</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">Fagaz</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">3,800</td>
+                <td class="px-4 py-3 text-sm whitespace-nowrap">
+                  <button class="btn-secondary rounded px-4 py-2 text-sm font-medium">Ajustar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+  <script type="module" src="stock.js"></script>
+</body>
+</html>

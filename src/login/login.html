@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fagaz - Login</title>
+  <link rel="manifest" href="../../public/manifest.json" />
+  <link rel="stylesheet" href="../common/styles.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+<body class="bg-[var(--background-color)] flex items-center justify-center min-h-screen">
+  <main class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center text-[var(--primary-color)]">Fagaz Servicios</h1>
+    <form id="loginForm" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-[var(--text-secondary)] mb-1" for="email">Email</label>
+        <input class="input-field" type="email" id="email" name="email" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-[var(--text-secondary)] mb-1" for="password">Contraseña</label>
+        <input class="input-field" type="password" id="password" name="password" required />
+      </div>
+      <button class="btn-primary w-full rounded-lg h-12 text-base font-bold" type="submit">Ingresar</button>
+    </form>
+    <p id="loginError" class="text-red-600 text-sm mt-4 hidden text-center"></p>
+  </main>
+  <script type="module" src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fagaz - Registro de Operaciones</title>
+  <link rel="manifest" href="../../public/manifest.json" />
+  <link rel="stylesheet" href="../common/styles.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+</head>
+<body class="bg-[var(--background-color)] text-[var(--secondary-color)]">
+  <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+    <header id="header"></header>
+    
+    <main class="flex flex-col items-center justify-center min-h-[80vh] px-2 sm:px-8 md:px-20 lg:px-40 py-8 bg-[var(--background-color)]">
+      <div class="w-full max-w-7xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-8 text-black">Registro de Operaciones</h1>
+        <form id="filtrosRegistro" class="flex flex-wrap gap-4 mb-6 items-end justify-center">
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Cliente</label>
+            <input type="text" id="filtroCliente" class="input-field text-xs text-black" placeholder="Buscar cliente..." />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Mercadería</label>
+            <select id="filtroMercaderia" class="input-field text-xs text-black">
+              <option value="">Todas</option>
+              <option value="maiz">Maiz</option>
+              <option value="trigo">Trigo</option>
+              <option value="soja">Soja</option>
+              <option value="girasol">Girasol</option>
+              <option value="cebada">Cebada</option>
+              <option value="sorgo">Sorgo</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Estado</label>
+            <select id="filtroEstado" class="input-field text-xs text-black">
+              <option value="">Todos</option>
+              <option value="en curso">En curso</option>
+              <option value="finalizada">Finalizada</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Fecha</label>
+            <div class="flex gap-2">
+              <input type="date" id="filtroFechaDesde" class="input-field text-xs text-black" placeholder="Desde" />
+              <input type="date" id="filtroFechaHasta" class="input-field text-xs text-black" placeholder="Hasta" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Depósito</label>
+            <select id="filtroDeposito" class="input-field text-xs text-black">
+              <option value="">Todos</option>
+              <option value="Baigorria">Baigorria</option>
+              <option value="Fagaz">Fagaz</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-black">Modalidad</label>
+            <select id="filtroModalidad" class="input-field text-xs text-black">
+              <option value="">Todas</option>
+              <option value="trasilado">Trasilado</option>
+              <option value="descarga">Descarga</option>
+            </select>
+          </div>
+          <button type="button" id="btnLimpiarFiltros" class="btn-secondary rounded px-4 py-2 text-xs font-medium">Limpiar</button>
+        </form>
+        <div id="operacionesTable" class="bg-white rounded-2xl shadow-2xl p-8 border border-[var(--border-color)] text-black overflow-x-auto w-full"></div>
+      </div>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+  <script type="module" src="registro.js"></script>
+</body>
+</html>
