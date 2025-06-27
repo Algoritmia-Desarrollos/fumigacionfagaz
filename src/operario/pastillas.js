@@ -1,6 +1,7 @@
 import { renderHeader } from '../common/header.js';
 import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
+import { supabase } from '../common/supabase.js';
 
 requireRole('operario');
 document.getElementById('header').innerHTML = renderHeader();
@@ -13,17 +14,16 @@ const camionesContainer = document.getElementById('camionesContainer');
 const camionesInput = document.getElementById('camiones');
 const tratamiento = document.getElementById('tratamiento');
 const resultadoPastillas = document.getElementById('resultadoPastillas');
-const btnConfirmar = document.getElementById('btnConfirmar');
-const btnCalcular = document.getElementById('btnCalcular');
-const resumenPastillas = document.getElementById('resumenPastillas');
+const btnRegistrar = document.getElementById('btnRegistrar');
+const deposito = document.getElementById('deposito');
+const resumenDeposito = document.getElementById('resumenDeposito');
 const resumenModalidad = document.getElementById('resumenModalidad');
 const resumenToneladas = document.getElementById('resumenToneladas');
 const resumenTratamiento = document.getElementById('resumenTratamiento');
 const resumenDosis = document.getElementById('resumenDosis');
 const resumenTotal = document.getElementById('resumenTotal');
-const btnRegistrar = document.getElementById('btnRegistrar');
-const deposito = document.getElementById('deposito');
-const resumenDeposito = document.getElementById('resumenDeposito');
+
+let operacionActual = {};
 
 function calcularPastillas() {
   let toneladas = 0;
@@ -46,18 +46,12 @@ modalidad.addEventListener('change', () => {
   if (modalidad.value === 'trasilado') {
     toneladasContainer.classList.remove('hidden');
     camionesContainer.classList.add('hidden');
-    toneladasInput.value = '';
-    camionesInput.value = '';
   } else if (modalidad.value === 'descarga') {
     camionesContainer.classList.remove('hidden');
     toneladasContainer.classList.add('hidden');
-    toneladasInput.value = '';
-    camionesInput.value = '';
   } else {
     toneladasContainer.classList.add('hidden');
     camionesContainer.classList.add('hidden');
-    toneladasInput.value = '';
-    camionesInput.value = '';
   }
   calcularPastillas();
 });
@@ -65,66 +59,33 @@ toneladasInput.addEventListener('input', calcularPastillas);
 camionesInput.addEventListener('input', calcularPastillas);
 tratamiento.addEventListener('change', calcularPastillas);
 
-// Inicializar stock si no existe
-function inicializarStock() {
-  let stock = JSON.parse(localStorage.getItem('stock_pastillas'));
-  if (!stock) {
-    stock = {
-      'Baigorria': 2500,
-      'Fagaz': 3800
-    };
-    localStorage.setItem('stock_pastillas', JSON.stringify(stock));
-  }
-  return stock;
-}
-
-function descontarStock(deposito, cantidad) {
-  let stock = JSON.parse(localStorage.getItem('stock_pastillas')) || {};
-  if (!stock[deposito]) stock[deposito] = 0;
-  if (stock[deposito] < cantidad) return false;
-  stock[deposito] -= cantidad;
-  localStorage.setItem('stock_pastillas', JSON.stringify(stock));
-  return true;
-}
-
-inicializarStock();
-
-function getResumenTextos() {
-  let modalidadTxt = modalidad.value === 'trasilado' ? 'Trasilado' : (modalidad.value === 'descarga' ? 'Descarga de camiones' : '-');
-  let toneladas = 0;
-  if (modalidad.value === 'trasilado') toneladas = Number(toneladasInput.value) || 0;
-  if (modalidad.value === 'descarga') toneladas = (Number(camionesInput.value) || 0) * 28;
-  let tratamientoTxt = tratamiento.value === 'preventivo' ? 'Preventivo' : (tratamiento.value === 'curativo' ? 'Curativo' : '-');
-  let dosis = tratamiento.value === 'preventivo' ? '2 pastillas/tn' : (tratamiento.value === 'curativo' ? '3 pastillas/tn' : '-');
-  let pastillas = calcularPastillas();
-  return { modalidadTxt, toneladas, tratamientoTxt, dosis, pastillas };
-}
-
-function setInputsFromOperacion() {
+async function getOperacionActual() {
   const id = localStorage.getItem('operacion_actual');
-  let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  const opActual = operaciones.find(op => op.id === id);
-  if (!opActual) return;
-  if (opActual.deposito) {
-    deposito.value = opActual.deposito;
+  if (!id) return null;
+  const { data, error } = await supabase.from('operaciones').select('*').eq('id', id).single();
+  if (error) {
+    console.error('Error fetching operacion:', error);
+    return null;
   }
-  if (opActual.modalidad) {
-    modalidad.value = opActual.modalidad;
-    if (opActual.modalidad === 'trasilado') {
-      toneladasContainer.classList.remove('hidden');
-      camionesContainer.classList.add('hidden');
-      toneladasInput.value = opActual.toneladas || '';
-      camionesInput.value = '';
-    } else if (opActual.modalidad === 'descarga') {
-      camionesContainer.classList.remove('hidden');
-      toneladasContainer.classList.add('hidden');
-      camionesInput.value = opActual.camiones || '';
-      toneladasInput.value = '';
+  return data;
+}
+
+async function setInputsFromOperacion() {
+  operacionActual = await getOperacionActual();
+  if (!operacionActual) return;
+
+  if (operacionActual.deposito) deposito.value = operacionActual.deposito;
+  if (operacionActual.modalidad) {
+    modalidad.value = operacionActual.modalidad;
+    modalidad.dispatchEvent(new Event('change'));
+    if (operacionActual.modalidad === 'trasilado') {
+      toneladasInput.value = operacionActual.toneladas || '';
+    } else if (operacionActual.modalidad === 'descarga') {
+      camionesInput.value = operacionActual.camiones || '';
     }
   }
-  if (opActual.tratamiento) {
-    tratamiento.value = opActual.tratamiento;
-  }
+  if (operacionActual.tratamiento) tratamiento.value = operacionActual.tratamiento;
+  mostrarResumenAuto();
 }
 
 function mostrarResumenAuto() {
@@ -137,10 +98,16 @@ function mostrarResumenAuto() {
   resumenTotal.textContent = pastillas > 0 ? pastillas : '-';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  setInputsFromOperacion();
-  mostrarResumenAuto();
-});
+function getResumenTextos() {
+  let modalidadTxt = modalidad.value === 'trasilado' ? 'Trasilado' : (modalidad.value === 'descarga' ? 'Descarga de camiones' : '-');
+  let toneladas = 0;
+  if (modalidad.value === 'trasilado') toneladas = Number(toneladasInput.value) || 0;
+  if (modalidad.value === 'descarga') toneladas = (Number(camionesInput.value) || 0) * 28;
+  let tratamientoTxt = tratamiento.value === 'preventivo' ? 'Preventivo' : (tratamiento.value === 'curativo' ? 'Curativo' : '-');
+  let dosis = tratamiento.value === 'preventivo' ? '2 pastillas/tn' : (tratamiento.value === 'curativo' ? '3 pastillas/tn' : '-');
+  let pastillas = calcularPastillas();
+  return { modalidadTxt, toneladas, tratamientoTxt, dosis, pastillas };
+}
 
 deposito.addEventListener('change', mostrarResumenAuto);
 modalidad.addEventListener('change', mostrarResumenAuto);
@@ -148,51 +115,79 @@ toneladasInput.addEventListener('input', mostrarResumenAuto);
 camionesInput.addEventListener('input', mostrarResumenAuto);
 tratamiento.addEventListener('change', mostrarResumenAuto);
 
-btnRegistrar.addEventListener('click', () => {
-  const { pastillas } = getResumenTextos();
+btnRegistrar.addEventListener('click', async () => {
+  const { pastillas, toneladas } = getResumenTextos();
   if (!deposito.value || !modalidad.value || !tratamiento.value || pastillas <= 0) {
     alert('Complete todos los campos y asegúrese de que la cantidad de pastillas sea válida.');
     return;
   }
-  // Obtener depósito seleccionado
+
   const depositoSeleccionado = deposito.value;
+
   // Descontar stock
-  if (!descontarStock(depositoSeleccionado, pastillas)) {
+  const { data: stockData, error: stockError } = await supabase
+    .from('stock')
+    .select('id, cantidad')
+    .eq('deposito', depositoSeleccionado)
+    .single();
+
+  if (stockError || !stockData) {
+    alert('No se pudo obtener el stock del depósito ' + depositoSeleccionado);
+    return;
+  }
+  if (stockData.cantidad < pastillas) {
     alert('No hay suficiente stock de pastillas en el depósito ' + depositoSeleccionado + '.');
     return;
   }
-  // Crear un nuevo registro histórico de pastillas
-  const id = localStorage.getItem('operacion_actual');
-  let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  const opBase = operaciones.find(op => op.id === id);
-  if (!opBase) {
-    alert('No se encontró la operación base.');
+  
+  const nuevaCantidad = stockData.cantidad - pastillas;
+  const { error: updateError } = await supabase
+    .from('stock')
+    .update({ cantidad: nuevaCantidad })
+    .eq('id', stockData.id);
+
+  if (updateError) {
+    alert('Error al actualizar el stock.');
     return;
   }
-  
+
   // Crear nuevo registro histórico
   const nuevoRegistro = {
-    cliente: opBase.cliente,
-    mercaderia: opBase.mercaderia,
-    area_tipo: opBase.area_tipo,
-    silo: opBase.silo,
-    celda: opBase.celda,
+    cliente: operacionActual.cliente,
+    mercaderia: operacionActual.mercaderia,
+    area_tipo: operacionActual.area_tipo,
+    silo: operacionActual.silo,
+    celda: operacionActual.celda,
     deposito: depositoSeleccionado,
-    modalidad: modalidad.value,
     tratamiento: tratamiento.value,
-    toneladas: modalidad.value === 'trasilado' ? Number(toneladasInput.value) : (Number(camionesInput.value) * 28),
-    camiones: modalidad.value === 'descarga' ? Number(camionesInput.value) : undefined,
+    toneladas: toneladas,
     pastillas: pastillas,
-    created_at: new Date().toISOString(),
-    id: Date.now().toString() + Math.floor(Math.random()*1000),
-    tipo_registro: 'pastillas', // Identificar que es un registro de pastillas
-    estado: opBase.estado, // mantiene el estado actual (en curso o finalizada)
-    checklist: opBase.checklist, // mantener el checklist
+    tipo_registro: 'pastillas',
+    estado: 'en curso',
+    operario: operacionActual.operario,
+    operacion_original_id: operacionActual.operacion_original_id || operacionActual.id,
   };
-  
-  // Insertar el nuevo registro al principio del array para que sea el más reciente
-  operaciones.unshift(nuevoRegistro);
-  localStorage.setItem('operaciones', JSON.stringify(operaciones));
+
+  const { error: insertError } = await supabase.from('operaciones').insert([nuevoRegistro]);
+
+  if (insertError) {
+    alert('Error al guardar el registro de pastillas.');
+    // Revertir el descuento de stock si falla la inserción
+    await supabase.from('stock').update({ cantidad: stockData.cantidad }).eq('id', stockData.id);
+    return;
+  }
+
+  const { error: historyError } = await supabase
+    .from('historial_stock')
+    .insert([{ tipo: 'uso', deposito: depositoSeleccionado, cantidad: pastillas }]);
+
+  if (historyError) {
+    // No es un error crítico, solo loguear
+    console.error('Error inserting stock history:', historyError);
+  }
+
   alert('Registro de pastillas guardado y stock descontado correctamente.');
   window.location.href = 'operacion.html';
 });
+
+document.addEventListener('DOMContentLoaded', setInputsFromOperacion);

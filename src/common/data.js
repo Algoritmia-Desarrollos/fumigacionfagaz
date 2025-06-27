@@ -1,14 +1,16 @@
-export function getOperaciones() {
-  let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  if (operaciones.length === 0) {
-    operaciones = [
-      { id: '1', operario: 'Juan Perez', cliente: 'Cliente A', deposito: 'Baigorria', area: 'Silo 301', mercaderia: 'Maíz', tratamiento: 'Preventivo', toneladas: 150, pastillas: 300, estado: 'finalizada', created_at: '2024-07-25T10:00:00.000Z', tipo_registro: 'finalizacion', checklist: [{ item: 'Tapar ventiladores', completado: true, imagen: 'https://via.placeholder.com/150' }] },
-      { id: '2', operario: 'Ana Gomez', cliente: 'Cliente B', deposito: 'Fagaz', area: 'Celda 2', mercaderia: 'Trigo', tratamiento: 'Curativo', toneladas: 200, pastillas: 600, estado: 'finalizada', created_at: '2024-07-26T11:30:00.000Z', tipo_registro: 'finalizacion', checklist: [{ item: 'Tapar ventiladores', completado: true, imagen: 'https://via.placeholder.com/150' }] },
-      { id: '3', operario: 'Juan Perez', cliente: 'Cliente C', deposito: 'Baigorria', area: 'Silo 305', mercaderia: 'Soja', tratamiento: 'Preventivo', toneladas: 180, pastillas: 360, estado: 'en curso', created_at: '2024-07-27T09:00:00.000Z', tipo_registro: 'inicial', checklist: [{ item: 'Tapar ventiladores', completado: false, imagen: 'https://via.placeholder.com/150' }] },
-    ];
-    localStorage.setItem('operaciones', JSON.stringify(operaciones));
+import { supabase } from './supabase.js';
+
+export async function getOperaciones() {
+  const { data, error } = await supabase
+    .from('operaciones')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching operaciones:', error);
+    return [];
   }
-  return operaciones.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return data;
 }
 
 export function renderOperaciones(container, operaciones, isAdmin = false) {

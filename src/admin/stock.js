@@ -1,6 +1,7 @@
 import { renderHeader } from '../common/header.js';
 import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
+import { supabase } from '../common/supabase.js';
 
 requireRole('admin');
 document.getElementById('header').innerHTML = renderHeader();
@@ -11,28 +12,29 @@ const historialStockEl = document.getElementById('historial-stock');
 const formAñadirStock = document.getElementById('formAñadirStock');
 const formQuitarStock = document.getElementById('formQuitarStock');
 
-function getStock() {
-  let stock = JSON.parse(localStorage.getItem('stock'));
-  if (!stock) {
-    stock = {
-      'Baigorria': 10000,
-      'Fagaz': 15000,
-    };
-    localStorage.setItem('stock', JSON.stringify(stock));
+async function getStock() {
+  const { data, error } = await supabase.from('stock').select('*');
+  if (error) {
+    console.error('Error fetching stock:', error);
+    return {};
   }
-  return stock;
+  return data.reduce((acc, item) => {
+    acc[item.deposito] = item.cantidad;
+    return acc;
+  }, {});
 }
 
-function getHistorialStock() {
-  return JSON.parse(localStorage.getItem('historial_stock')) || [];
+async function getHistorialStock() {
+  const { data, error } = await supabase.from('historial_stock').select('*').order('created_at', { ascending: false });
+  if (error) {
+    console.error('Error fetching stock history:', error);
+    return [];
+  }
+  return data;
 }
 
-function setHistorialStock(historial) {
-  localStorage.setItem('historial_stock', JSON.stringify(historial));
-}
-
-function renderStock() {
-  const stock = getStock();
+async function renderStock() {
+  const stock = await getStock();
   if (stockList) {
     stockList.innerHTML = '';
     for (const deposito in stock) {
@@ -47,10 +49,10 @@ function renderStock() {
   }
 }
 
-function renderHistorialStock() {
+async function renderHistorialStock() {
   if (!historialStockEl) return;
 
-  const historial = getHistorialStock().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const historial = await getHistorialStock();
 
   if (historial.length === 0) {
     historialStockEl.innerHTML = '<p class="text-center text-[var(--text-secondary)]">No hay registros de movimientos de stock.</p>';
@@ -74,8 +76,21 @@ function renderHistorialStock() {
   const tbody = `
     <tbody>
       ${historial.map(item => {
-        const tipo = item.tipo === 'adicion' ? 'Adición' : 'Extracción';
-        const tipoClass = item.tipo === 'adicion' ? 'text-green-600' : 'text-red-600';
+        let tipo, tipoClass;
+        switch (item.tipo) {
+          case 'adicion':
+            tipo = 'Adición';
+            tipoClass = 'text-green-600';
+            break;
+          case 'extraccion':
+            tipo = 'Extracción';
+            tipoClass = 'text-yellow-600';
+            break;
+          case 'uso':
+            tipo = 'Uso';
+            tipoClass = 'text-red-600';
+            break;
+        }
         return `
           <tr class="hover:bg-[var(--border-color)]">
             <td class="px-4 py-2">${new Date(item.created_at).toLocaleString('es-AR')}</td>
@@ -94,28 +109,48 @@ function renderHistorialStock() {
 }
 
 if (formAñadirStock) {
-  formAñadirStock.addEventListener('submit', (e) => {
+  formAñadirStock.addEventListener('submit', async (e) => {
     e.preventDefault();
     const deposito = document.getElementById('deposito').value;
     const cantidad = parseInt(document.getElementById('cantidad').value, 10);
 
     if (deposito && cantidad > 0) {
-      let stock = getStock();
-      stock[deposito] = (stock[deposito] || 0) + cantidad;
-      localStorage.setItem('stock', JSON.stringify(stock));
+      const { data: stockData, error: stockError } = await supabase
+        .from('stock')
+        .select('id, cantidad')
+        .eq('deposito', deposito)
+        .single();
 
-      const historial = getHistorialStock();
-      historial.push({
-        id: Date.now().toString(),
-        tipo: 'adicion',
-        deposito: deposito,
-        cantidad: cantidad,
-        created_at: new Date().toISOString(),
-      });
-      setHistorialStock(historial);
+      if (stockError && stockError.code !== 'PGRST116') { // Ignorar error si no se encuentra la fila
+        console.error('Error fetching stock:', stockError);
+        alert('Error al obtener el stock.');
+        return;
+      }
 
-      renderStock();
-      renderHistorialStock();
+      const nuevaCantidad = (stockData?.cantidad || 0) + cantidad;
+      
+      const { error: upsertError } = await supabase
+        .from('stock')
+        .upsert({ id: stockData?.id, deposito, cantidad: nuevaCantidad }, { onConflict: 'deposito' });
+
+      if (upsertError) {
+        console.error('Error upserting stock:', upsertError);
+        alert('Error al actualizar el stock.');
+        return;
+      }
+
+      const { error: historyError } = await supabase
+        .from('historial_stock')
+        .insert([{ tipo: 'adicion', deposito, cantidad }]);
+
+      if (historyError) {
+        console.error('Error inserting stock history:', historyError);
+        alert('Error al registrar el historial de stock.');
+        return;
+      }
+
+      await renderStock();
+      await renderHistorialStock();
       formAñadirStock.reset();
       alert(`${cantidad} pastillas añadidas al stock de ${deposito}.`);
     } else {
@@ -125,32 +160,54 @@ if (formAñadirStock) {
 }
 
 if (formQuitarStock) {
-  formQuitarStock.addEventListener('submit', (e) => {
+  formQuitarStock.addEventListener('submit', async (e) => {
     e.preventDefault();
     const deposito = document.getElementById('depositoQuitar').value;
     const cantidad = parseInt(document.getElementById('cantidadQuitar').value, 10);
 
     if (deposito && cantidad > 0) {
-      let stock = getStock();
-      if (stock[deposito] < cantidad) {
+      const { data: stockData, error: stockError } = await supabase
+        .from('stock')
+        .select('id, cantidad')
+        .eq('deposito', deposito)
+        .single();
+
+      if (stockError) {
+        console.error('Error fetching stock:', stockError);
+        alert('Error al obtener el stock.');
+        return;
+      }
+
+      if (stockData.cantidad < cantidad) {
         alert('No hay suficiente stock para quitar esa cantidad.');
         return;
       }
-      stock[deposito] -= cantidad;
-      localStorage.setItem('stock', JSON.stringify(stock));
 
-      const historial = getHistorialStock();
-      historial.push({
-        id: Date.now().toString(),
-        tipo: 'extraccion',
-        deposito: deposito,
-        cantidad: cantidad,
-        created_at: new Date().toISOString(),
-      });
-      setHistorialStock(historial);
+      const nuevaCantidad = stockData.cantidad - cantidad;
 
-      renderStock();
-      renderHistorialStock();
+      const { error: updateError } = await supabase
+        .from('stock')
+        .update({ cantidad: nuevaCantidad })
+        .eq('id', stockData.id);
+
+      if (updateError) {
+        console.error('Error updating stock:', updateError);
+        alert('Error al actualizar el stock.');
+        return;
+      }
+
+      const { error: historyError } = await supabase
+        .from('historial_stock')
+        .insert([{ tipo: 'extraccion', deposito, cantidad }]);
+
+      if (historyError) {
+        console.error('Error inserting stock history:', historyError);
+        alert('Error al registrar el historial de stock.');
+        return;
+      }
+
+      await renderStock();
+      await renderHistorialStock();
       formQuitarStock.reset();
       alert(`${cantidad} pastillas quitadas del stock de ${deposito}.`);
     } else {

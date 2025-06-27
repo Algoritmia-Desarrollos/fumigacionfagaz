@@ -1,6 +1,7 @@
 import { renderHeader } from '../common/header.js';
 import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
+import { supabase } from '../common/supabase.js';
 
 requireRole('operario');
 document.getElementById('header').innerHTML = renderHeader();
@@ -23,22 +24,39 @@ document.getElementById('btnVolver').addEventListener('click', () => {
 });
 
 // Mostrar datos simulados
-function getOperacionActual() {
+async function getOperacionActual() {
   const id = localStorage.getItem('operacion_actual');
-  const operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  return operaciones.find(op => op.id === id) || {};
-}
-const op = getOperacionActual();
-document.getElementById('cliente').textContent = op.cliente || '---';
-document.getElementById('ubicacion').textContent = `Depósito: ${op.deposito || '-'}, Área: ${(op.silo || op.celda || '-')}`;
-document.getElementById('fecha').textContent = new Date(op.created_at || Date.now()).toLocaleString('es-AR');
-document.getElementById('mercaderia').textContent = op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-';
+  if (!id) return {};
+  
+  const { data, error } = await supabase
+    .from('operaciones')
+    .select('*, checklist_items(*)')
+    .eq('id', id)
+    .single();
 
-// Progreso checklist
-const checklist = op.checklist || [];
-const completados = checklist.filter(i => i.completado).length;
-const pastillasRegistradas = typeof op.pastillas === 'number' && op.pastillas > 0;
-document.getElementById('progreso').textContent = `${completados}/4`;
+  if (error) {
+    console.error('Error fetching operacion actual:', error);
+    return {};
+  }
+  return data;
+}
+
+async function renderOperacion() {
+  const op = await getOperacionActual();
+  if (!op.id) {
+    // Manejar caso de no encontrar operación
+    return;
+  }
+  document.getElementById('cliente').textContent = op.cliente || '---';
+  document.getElementById('ubicacion').textContent = `Depósito: ${op.deposito || '-'}, Área: ${(op.silo || op.celda || '-')}`;
+  document.getElementById('fecha').textContent = new Date(op.created_at || Date.now()).toLocaleString('es-AR');
+  document.getElementById('mercaderia').textContent = op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-';
+
+  // Progreso checklist
+  const checklist = op.checklist_items || [];
+  const completados = checklist.filter(i => i.completado).length;
+  const pastillasRegistradas = typeof op.pastillas === 'number' && op.pastillas > 0;
+  document.getElementById('progreso').textContent = `${completados}/4`;
 document.getElementById('progressBar').value = completados * 25;
 if (completados === 4) {
   document.getElementById('btnPastillas').disabled = false;
@@ -50,22 +68,6 @@ if (completados === 4) {
 // El botón de finalizar solo se habilita si checklist completo y pastillas registradas
 document.getElementById('btnEnviar').disabled = false;
 
-function hayOperacionEnCurso() {
-  const id = localStorage.getItem('operacion_actual');
-  const operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  return operaciones.some(op => op.id === id && op.estado === 'en curso');
 }
 
-const modalSinOperacion = document.getElementById('modalSinOperacion');
-const btnCerrarModalSinOperacion = document.getElementById('cerrarModalSinOperacion');
-if (!hayOperacionEnCurso()) {
-  modalSinOperacion.classList.remove('hidden');
-  if (btnCerrarModalSinOperacion) {
-    btnCerrarModalSinOperacion.addEventListener('click', () => {
-      window.location.href = 'index.html';
-    });
-  }
-  setTimeout(() => {
-    window.location.href = 'index.html';
-  }, 3500);
-}
+renderOperacion();

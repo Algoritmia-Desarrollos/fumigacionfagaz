@@ -17,8 +17,8 @@ if (toggleFiltrosBtn && filtrosContainer) {
   });
 }
 
-function aplicarFiltros() {
-  let operaciones = getOperaciones();
+async function aplicarFiltros() {
+  let operaciones = await getOperaciones();
   const cliente = document.getElementById('filtroCliente')?.value;
   const mercaderia = document.getElementById('filtroMercaderia')?.value;
   const estado = document.getElementById('filtroEstado')?.value;

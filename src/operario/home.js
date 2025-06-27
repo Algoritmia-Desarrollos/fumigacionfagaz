@@ -10,8 +10,8 @@ document.getElementById('footer').innerHTML = renderFooter();
 const operacionesList = document.getElementById('operacionesList');
 const btnNueva = document.getElementById('btnNueva');
 
-function renderOperaciones() {
-  const ops = getOperaciones().filter(op => op.estado !== 'finalizada' && (!op.tipo_registro || op.tipo_registro === 'inicial'));
+async function renderOperaciones() {
+  const ops = (await getOperaciones()).filter(op => op.estado !== 'finalizada' && (!op.tipo_registro || op.tipo_registro === 'inicial'));
   if (ops.length === 0) {
     operacionesList.innerHTML = '<p class="text-[var(--text-secondary)]">No hay operaciones en curso.</p>';
     return;

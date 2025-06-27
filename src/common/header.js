@@ -32,6 +32,7 @@ export function renderHeader() {
     navLinks = `
         <a class="${getLinkClasses('dashboard.html')}" href="dashboard.html">Dashboard</a>
         <a class="${getLinkClasses('stock.html')}" href="stock.html">Stock</a>
+        <a class="${getLinkClasses('gestion.html')}" href="gestion.html">Gestión</a>
         <a class="${getLinkClasses('reportes.html')}" href="reportes.html">Reportes</a>
     `;
   } else if (user?.role === 'operario') {
