@@ -1,11 +1,9 @@
 import { renderHeader } from '../common/header.js';
-import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
 import { getOperaciones, renderOperaciones as renderOperacionesComun } from '../common/data.js';
 
 requireRole('operario');
 document.getElementById('header').innerHTML = renderHeader();
-document.getElementById('footer').innerHTML = renderFooter();
 
 const toggleFiltrosBtn = document.getElementById('toggleFiltrosBtn');
 const filtrosContainer = document.getElementById('filtrosContainer');

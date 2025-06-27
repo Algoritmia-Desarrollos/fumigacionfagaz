@@ -1,11 +1,9 @@
 import { renderHeader } from '../common/header.js';
-import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
 import { getOperaciones } from '../common/data.js';
 
 requireRole('operario');
 document.getElementById('header').innerHTML = renderHeader();
-document.getElementById('footer').innerHTML = renderFooter();
 
 const operacionesList = document.getElementById('operacionesList');
 const btnNueva = document.getElementById('btnNueva');

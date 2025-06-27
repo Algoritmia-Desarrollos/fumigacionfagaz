@@ -1,11 +1,9 @@
 import { renderHeader } from '../common/header.js';
-import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
 import { supabase } from '../common/supabase.js';
 
 requireRole('admin');
 document.getElementById('header').innerHTML = renderHeader();
-document.getElementById('footer').innerHTML = renderFooter();
 
 // Elementos del DOM
 const formCliente = document.getElementById('formCliente');

@@ -1,5 +1,4 @@
 import { renderHeader } from '../common/header.js';
-import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
 import { supabase } from '../common/supabase.js';
 
@@ -7,7 +6,6 @@ requireRole('operario');
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('header').innerHTML = renderHeader();
-  document.getElementById('footer').innerHTML = renderFooter();
 
   const operacionId = localStorage.getItem('operacion_actual');
   if (!operacionId) {
@@ -64,8 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       btnConfirmar.style.display = 'none';
     } else {
       btnConfirmar.addEventListener('click', async () => {
-        // Marcar como finalizadas todas las operaciones en curso con el mismo cliente, tipo de área y silo/celda
-        const { error: updateError } = await supabase
+        if (confirm('¿Está seguro de que desea finalizar esta operación? Esta acción no se puede deshacer.')) {
+          // Marcar como finalizadas todas las operaciones en curso con el mismo cliente, tipo de área y silo/celda
+          const { error: updateError } = await supabase
           .from('operaciones')
           .update({ estado: 'finalizada' })
           .eq('cliente', op.cliente)
@@ -107,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.removeItem('operacion_actual');
         alert('Operación finalizada correctamente.');
         window.location.href = 'home.html';
+        }
       });
     }
   }

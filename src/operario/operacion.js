@@ -1,11 +1,9 @@
 import { renderHeader } from '../common/header.js';
-import { renderFooter } from '../common/footer.js';
 import { requireRole } from '../common/router.js';
 import { supabase } from '../common/supabase.js';
 
 requireRole('operario');
 document.getElementById('header').innerHTML = renderHeader();
-document.getElementById('footer').innerHTML = renderFooter();
 
 document.getElementById('btnChecklist').addEventListener('click', () => {
   window.location.href = 'checklist.html';
@@ -48,7 +46,7 @@ async function renderOperacion() {
     return;
   }
   document.getElementById('cliente').textContent = op.cliente || '---';
-  document.getElementById('ubicacion').textContent = `Depósito: ${op.deposito || '-'}, Área: ${(op.silo || op.celda || '-')}`;
+  document.getElementById('ubicacion').textContent = op.silo || op.celda || '-';
   document.getElementById('fecha').textContent = new Date(op.created_at || Date.now()).toLocaleString('es-AR');
   document.getElementById('mercaderia').textContent = op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-';
 

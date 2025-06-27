@@ -151,36 +151,5 @@
 </div>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script type="module" src="index.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const closeMobileMenu = document.getElementById('closeMobileMenu');
-    const overlay = document.getElementById('mobileMenuOverlay');
-    const logoutMobile = document.getElementById('logoutMobile');
-    if (hamburgerBtn && mobileMenu) {
-      hamburgerBtn.onclick = () => mobileMenu.classList.remove('hidden');
-    }
-    if (closeMobileMenu && mobileMenu) {
-      closeMobileMenu.onclick = () => mobileMenu.classList.add('hidden');
-    }
-    if (overlay && mobileMenu) {
-      overlay.onclick = () => mobileMenu.classList.add('hidden');
-    }
-    // Cerrar menú al hacer click en un link
-    if (mobileMenu) {
-      mobileMenu.querySelectorAll('a').forEach(link => {
-        link.onclick = () => mobileMenu.classList.add('hidden');
-      });
-    }
-    // Logout desde el menú mobile
-    if (logoutMobile) {
-      logoutMobile.onclick = () => {
-        localStorage.removeItem('user');
-        window.location.href = '../login/login.html';
-      };
-    }
-  });
-</script>
 </body>
 </html>
