@@ -9,42 +9,117 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 </head>
-<body class="bg-[var(--background-light)]">
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
   <div class="relative flex min-h-screen flex-col overflow-x-hidden">
     <header id="header"></header>
-    <main class="px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-8">
-      <div class="flex flex-col w-full max-w-3xl">
-        <h2 class="text-3xl font-bold mb-6">Detalle de Operación</h2>
-        <div class="bg-white rounded-lg shadow p-6 border border-[var(--border-light)] space-y-4">
-          <div>
-            <h3 class="text-base font-semibold mb-1">Datos Generales</h3>
-            <ul class="text-sm text-[var(--text-secondary)] space-y-1">
-              <li><b>Cliente:</b> AgroExport S.A.</li>
-              <li><b>Depósito:</b> Depósito A</li>
-              <li><b>Área:</b> Campo 1</li>
-              <li><b>Mercadería:</b> Maíz</li>
-              <li><b>Tratamiento:</b> Preventivo</li>
-              <li><b>Modalidad:</b> Descarga de camiones</li>
-              <li><b>Tn:</b> 100</li>
-              <li><b>Pastillas usadas:</b> 500</li>
-              <li><b>Fecha:</b> 2024-07-26 10:00</li>
-              <li><b>Operario:</b> Carlos Ramirez</li>
-            </ul>
+    <main class="flex-1 px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 py-4 sm:py-8">
+      <div class="w-full max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-3xl sm:text-4xl font-bold text-black">Detalle de Operación</h1>
+          <button id="btnHabilitarEdicion" class="btn-primary rounded-lg px-4 py-2 flex items-center gap-2">
+            <span class="material-icons">edit</span>
+            <span>Editar</span>
+          </button>
+        </div>
+
+        <!-- Vista de Resumen -->
+        <div id="resumenOperacion" class="bg-white p-8 rounded-xl shadow-lg space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <div class="flex flex-col">
+              <span class="label-text">Operario</span>
+              <span id="resumen-operario" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Cliente</span>
+              <span id="resumen-cliente" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Depósito</span>
+              <span id="resumen-deposito" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Área</span>
+              <span id="resumen-area" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Mercadería</span>
+              <span id="resumen-mercaderia" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Tratamiento</span>
+              <span id="resumen-tratamiento" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Toneladas</span>
+              <span id="resumen-toneladas" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Pastillas</span>
+              <span id="resumen-pastillas" class="font-semibold text-lg"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="label-text">Estado</span>
+              <span id="resumen-estado" class="font-semibold text-lg"></span>
+            </div>
           </div>
-          <div>
-            <h3 class="text-base font-semibold mb-1">Checklist y Evidencias</h3>
-            <ul class="text-sm text-[var(--text-secondary)] space-y-1">
-              <li>Tapar ventiladores <span class="text-green-600">✔</span> <a href="#" class="text-[var(--primary-color)] underline ml-2">Ver foto</a></li>
-              <li>Sanitizar <span class="text-green-600">✔</span> <a href="#" class="text-[var(--primary-color)] underline ml-2">Ver foto</a></li>
-              <li>Verificar presencia de IV <span class="text-green-600">✔</span> <a href="#" class="text-[var(--primary-color)] underline ml-2">Ver foto</a></li>
-              <li>Colocar cartelería <span class="text-green-600">✔</span> <a href="#" class="text-[var(--primary-color)] underline ml-2">Ver foto</a></li>
-            </ul>
-          </div>
-          <div class="flex justify-end gap-2">
-            <button class="btn-secondary rounded-lg h-12 px-6 text-base font-bold" onclick="window.location.href='operaciones.html'">Volver</button>
-            <button class="btn-primary rounded-lg h-12 px-6 text-base font-bold">Editar</button>
+          <div class="border-t pt-6">
+            <h3 class="text-xl font-bold mb-4">Checklist y Evidencias</h3>
+            <div id="checklist-container" class="space-y-4">
+              <!-- El checklist se renderizará aquí -->
+            </div>
           </div>
         </div>
+
+        <!-- Vista de Edición (oculta por defecto) -->
+        <form id="formOperacion" class="bg-white p-8 rounded-xl shadow-lg space-y-6 hidden">
+          <fieldset>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="operario" class="label-text">Operario</label>
+                <input type="text" id="operario" class="input-field">
+              </div>
+              <div>
+                <label for="cliente" class="label-text">Cliente</label>
+                <input type="text" id="cliente" class="input-field">
+              </div>
+              <div>
+                <label for="deposito" class="label-text">Depósito</label>
+                <input type="text" id="deposito" class="input-field">
+              </div>
+              <div>
+                <label for="area" class="label-text">Área</label>
+                <input type="text" id="area" class="input-field">
+              </div>
+              <div>
+                <label for="mercaderia" class="label-text">Mercadería</label>
+                <input type="text" id="mercaderia" class="input-field">
+              </div>
+              <div>
+                <label for="tratamiento" class="label-text">Tratamiento</label>
+                <input type="text" id="tratamiento" class="input-field">
+              </div>
+              <div>
+                <label for="toneladas" class="label-text">Toneladas</label>
+                <input type="number" id="toneladas" class="input-field">
+              </div>
+              <div>
+                <label for="pastillas" class="label-text">Pastillas</label>
+                <input type="number" id="pastillas" class="input-field">
+              </div>
+              <div>
+                <label for="estado" class="label-text">Estado</label>
+                <select id="estado" class="input-field">
+                  <option value="en curso">En curso</option>
+                  <option value="finalizada">Finalizada</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+          <div class="flex justify-end gap-4 mt-6">
+            <button type="button" id="btnCancelar" class="btn-secondary rounded-lg">Cancelar</button>
+            <button type="submit" id="btnGuardar" class="btn-primary rounded-lg">Guardar Cambios</button>
+          </div>
+        </form>
       </div>
     </main>
     <footer id="footer"></footer>

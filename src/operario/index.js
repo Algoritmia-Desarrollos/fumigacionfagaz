@@ -66,9 +66,11 @@ form.addEventListener('submit', (e) => {
     return;
   }
   // Guardar datos de la operación en localStorage
-  const data = {
-    id: Date.now().toString(),
-    deposito: form.deposito?.value,
+  const idOperacion = Date.now().toString();
+  const fechaCreacion = new Date().toISOString();
+
+  const operacionInicial = {
+    id: idOperacion,
     cliente: form.cliente.value,
     area_tipo: form.area_tipo.value,
     silo: form.silo_selector?.value,
@@ -76,11 +78,16 @@ form.addEventListener('submit', (e) => {
     mercaderia: form.mercaderia.value,
     estado: 'en curso',
     checklist: [],
-    created_at: new Date().toISOString()
+    created_at: fechaCreacion,
+    // Datos que estarán en blanco en el registro inicial
+    deposito: '',
+    pastillas: null,
+    tipo_registro: 'inicial' // Identificador del tipo de registro
   };
+
   let operaciones = JSON.parse(localStorage.getItem('operaciones')) || [];
-  operaciones.push(data);
+  operaciones.push(operacionInicial);
   localStorage.setItem('operaciones', JSON.stringify(operaciones));
-  localStorage.setItem('operacion_actual', data.id);
+  localStorage.setItem('operacion_actual', operacionInicial.id);
   window.location.href = 'operacion.html';
 });

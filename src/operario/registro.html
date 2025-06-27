@@ -8,15 +8,62 @@
   <link rel="stylesheet" href="../common/styles.css" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <style>
+    @media (max-width: 768px) {
+      #filtrosRegistro {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #filtrosRegistro > div {
+        width: 100%;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .operacion-card {
+        background-color: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid var(--border-color);
+      }
+      .operacion-card .card-item {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .operacion-card .card-item:last-child {
+        border-bottom: none;
+      }
+      .operacion-card .item-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+      .operacion-card .item-value {
+        font-weight: 500;
+        text-align: right;
+      }
+    }
+  </style>
 </head>
-<body class="bg-[var(--background-color)] text-[var(--secondary-color)]">
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
   <div class="relative flex min-h-screen flex-col overflow-x-hidden">
     <header id="header"></header>
     
-    <main class="flex flex-col items-center justify-center min-h-[80vh] px-2 sm:px-8 md:px-20 lg:px-40 py-8 bg-[var(--background-color)]">
+    <main class="flex-1 px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 py-4 sm:py-8">
       <div class="w-full max-w-7xl mx-auto">
-        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-8 text-black">Registro de Operaciones</h1>
-        <form id="filtrosRegistro" class="flex flex-wrap gap-4 mb-6 items-end justify-center">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-3xl sm:text-4xl font-bold text-black">Registro de Operaciones</h1>
+          <button id="toggleFiltrosBtn" class="btn-secondary rounded-lg px-4 py-2 flex items-center gap-2">
+            <span class="material-icons">filter_list</span>
+            <span>Filtros</span>
+          </button>
+        </div>
+        <div id="filtrosContainer" class="hidden mb-6">
+          <form id="filtrosRegistro" class="flex flex-wrap gap-4 items-end justify-center">
           <div>
             <label class="block text-xs font-semibold mb-1 text-black">Cliente</label>
             <input type="text" id="filtroCliente" class="input-field text-xs text-black" placeholder="Buscar cliente..." />
@@ -73,9 +120,10 @@
               <option value="descarga">Descarga</option>
             </select>
           </div>
-          <button type="button" id="btnLimpiarFiltros" class="btn-secondary rounded px-4 py-2 text-xs font-medium">Limpiar</button>
-        </form>
-        <div id="operacionesTable" class="bg-white rounded-2xl shadow-2xl p-8 border border-[var(--border-color)] text-black overflow-x-auto w-full"></div>
+            <button type="button" id="btnLimpiarFiltros" class="btn-secondary rounded px-4 py-2 text-xs font-medium">Limpiar</button>
+          </form>
+        </div>
+        <div id="operacionesContainer" class="w-full"></div>
       </div>
     </main>
     <footer id="footer"></footer>

@@ -48,11 +48,7 @@ if (completados === 4) {
   document.getElementById('btnPastillas').style.display = 'block';
 }
 // El botón de finalizar solo se habilita si checklist completo y pastillas registradas
-if (completados === 4 && pastillasRegistradas) {
-  document.getElementById('btnEnviar').disabled = false;
-} else {
-  document.getElementById('btnEnviar').disabled = true;
-}
+document.getElementById('btnEnviar').disabled = false;
 
 function hayOperacionEnCurso() {
   const id = localStorage.getItem('operacion_actual');

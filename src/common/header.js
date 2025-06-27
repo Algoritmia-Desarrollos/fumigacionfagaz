@@ -30,8 +30,7 @@ export function renderHeader() {
   let navLinks = '';
   if (user?.role === 'admin') {
     navLinks = `
-        <a class="${getLinkClasses('dashboard.html')}" href="dashboard.html">Panel</a>
-        <a class="${getLinkClasses('operaciones.html')}" href="operaciones.html">Operaciones</a>
+        <a class="${getLinkClasses('dashboard.html')}" href="dashboard.html">Dashboard</a>
         <a class="${getLinkClasses('stock.html')}" href="stock.html">Stock</a>
         <a class="${getLinkClasses('reportes.html')}" href="reportes.html">Reportes</a>
     `;
@@ -55,7 +54,12 @@ export function renderHeader() {
       <nav class="hidden md:flex items-center gap-6" id="mainNav">
         ${navLinks}
       </nav>
-      <button id="hamburgerBtn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 ml-2" aria-label="Abrir menú">
+      <div class="flex items-center gap-4">
+        <button id="btnLogout" class="hidden md:flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-800">
+          <span class="material-icons">logout</span>
+          <span>Cerrar Sesión</span>
+        </button>
+        <button id="hamburgerBtn" class="md:hidden flex flex-col justify-center items-center w-10 h-10" aria-label="Abrir menú">
         <span class="block w-7 h-1 bg-[var(--primary-color)] rounded mb-1"></span>
         <span class="block w-7 h-1 bg-[var(--primary-color)] rounded mb-1"></span>
         <span class="block w-7 h-1 bg-[var(--primary-color)] rounded"></span>
@@ -71,6 +75,7 @@ export function renderHeader() {
             </nav>
           </div>
           <button id="logoutMobile" class="btn-logout-mobile rounded-lg px-4 py-3 font-bold flex items-center justify-center text-lg w-full">
+            <span class="material-icons mr-2">logout</span>
             Cerrar sesión
           </button>
         </div>
@@ -107,3 +112,18 @@ export function renderHeader() {
     </header>
   `;
 }
+
+// Delegación de eventos para el logout
+document.addEventListener('click', (e) => {
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/src/login/login.html';
+  };
+
+  if (e.target.matches('#btnLogout') || e.target.closest('#btnLogout')) {
+    handleLogout();
+  }
+  if (e.target.matches('#logoutMobile') || e.target.closest('#logoutMobile')) {
+    handleLogout();
+  }
+});

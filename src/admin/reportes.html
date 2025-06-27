@@ -7,67 +7,18 @@
   <link rel="manifest" href="../../public/manifest.json" />
   <link rel="stylesheet" href="../common/styles.css" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 </head>
-<body class="bg-[var(--background-light)]">
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
   <div class="relative flex min-h-screen flex-col overflow-x-hidden">
     <header id="header"></header>
-    <main class="px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-8">
-      <div class="flex flex-col w-full max-w-4xl">
-        <h2 class="text-3xl font-bold mb-6">Reportes y Exportación</h2>
-        <div class="bg-white rounded-lg shadow p-6 border border-[var(--border-light)]">
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Rango de Fechas</label>
-            <input class="form-input w-full rounded-md h-11 p-2.5 text-sm" type="date" />
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Cliente</label>
-            <select class="form-select w-full rounded-md h-11 p-2.5 text-sm">
-              <option value="">Todos los Clientes</option>
-              <option value="agroexport">AgroExport S.A.</option>
-              <option value="graincorp">GrainCorp Ltd.</option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Operario</label>
-            <select class="form-select w-full rounded-md h-11 p-2.5 text-sm">
-              <option value="">Todos los Operarios</option>
-              <option value="carlos">Carlos Ramirez</option>
-              <option value="sofia">Sofia Rodriguez</option>
-            </select>
-          </div>
-          <div class="flex gap-2 mb-6">
-            <button class="btn-primary rounded-lg h-12 px-6 text-base font-bold">Exportar PDF</button>
-            <button class="btn-secondary rounded-lg h-12 px-6 text-base font-bold">Exportar Excel</button>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Fecha</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Cliente</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Operario</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Depósito</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Área</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Toneladas</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pastillas</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tratamiento</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y">
-                <tr>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">2024-07-26</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">AgroExport S.A.</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">Carlos Ramirez</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">Depósito A</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">Campo 1</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">100</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">500</td>
-                  <td class="px-4 py-3 text-sm whitespace-nowrap">Preventivo</td>
-                </tr>
-                <!-- Más filas de ejemplo -->
-              </tbody>
-            </table>
-          </div>
+    <main class="flex-1 px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 py-4 sm:py-8">
+      <div class="w-full max-w-4xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-bold text-black mb-6">Reportes</h1>
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <p class="mb-4">Seleccione el tipo de reporte que desea generar.</p>
+          <button id="btnExportarPDF" class="btn-primary rounded-lg w-full mb-4">Exportar a PDF</button>
+          <button id="btnExportarExcel" class="btn-primary rounded-lg w-full">Exportar a Excel</button>
         </div>
       </div>
     </main>

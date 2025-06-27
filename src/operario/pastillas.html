@@ -7,8 +7,23 @@
   <link rel="manifest" href="../../public/manifest.json" />
   <link rel="stylesheet" href="../common/styles.css" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <style>
+    @media (max-width: 640px) {
+      main {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      .p-6 {
+        padding: 1rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
   <div class="relative flex min-h-screen flex-col overflow-x-hidden">
     <header id="header"></header>
     <main class="px-4 sm:px-8 md:px-20 lg:px-40 flex flex-1 justify-center py-8">
@@ -73,5 +88,36 @@
     <footer id="footer"></footer>
   </div>
   <script type="module" src="pastillas.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const closeMobileMenu = document.getElementById('closeMobileMenu');
+      const overlay = document.getElementById('mobileMenuOverlay');
+      const logoutMobile = document.getElementById('logoutMobile');
+      if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.onclick = () => mobileMenu.classList.remove('hidden');
+      }
+      if (closeMobileMenu && mobileMenu) {
+        closeMobileMenu.onclick = () => mobileMenu.classList.add('hidden');
+      }
+      if (overlay && mobileMenu) {
+        overlay.onclick = () => mobileMenu.classList.add('hidden');
+      }
+      // Cerrar menú al hacer click en un link
+      if (mobileMenu) {
+        mobileMenu.querySelectorAll('a').forEach(link => {
+          link.onclick = () => mobileMenu.classList.add('hidden');
+        });
+      }
+      // Logout desde el menú mobile
+      if (logoutMobile) {
+        logoutMobile.onclick = () => {
+          localStorage.removeItem('user');
+          window.location.href = '../login/login.html';
+        };
+      }
+    });
+  </script>
 </body>
-</html> 
+</html>

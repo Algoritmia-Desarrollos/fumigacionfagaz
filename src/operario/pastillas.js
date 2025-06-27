@@ -172,17 +172,22 @@ btnRegistrar.addEventListener('click', () => {
   
   // Crear nuevo registro histórico
   const nuevoRegistro = {
-    ...opBase,
+    cliente: opBase.cliente,
+    mercaderia: opBase.mercaderia,
+    area_tipo: opBase.area_tipo,
+    silo: opBase.silo,
+    celda: opBase.celda,
     deposito: depositoSeleccionado,
     modalidad: modalidad.value,
     tratamiento: tratamiento.value,
     toneladas: modalidad.value === 'trasilado' ? Number(toneladasInput.value) : (Number(camionesInput.value) * 28),
     camiones: modalidad.value === 'descarga' ? Number(camionesInput.value) : undefined,
     pastillas: pastillas,
-    created_at: Date.now(),
+    created_at: new Date().toISOString(),
     id: Date.now().toString() + Math.floor(Math.random()*1000),
     tipo_registro: 'pastillas', // Identificar que es un registro de pastillas
-    estado: opBase.estado // mantiene el estado actual (en curso o finalizada)
+    estado: opBase.estado, // mantiene el estado actual (en curso o finalizada)
+    checklist: opBase.checklist, // mantener el checklist
   };
   
   // Insertar el nuevo registro al principio del array para que sea el más reciente
@@ -190,4 +195,4 @@ btnRegistrar.addEventListener('click', () => {
   localStorage.setItem('operaciones', JSON.stringify(operaciones));
   alert('Registro de pastillas guardado y stock descontado correctamente.');
   window.location.href = 'operacion.html';
-}); 
+});

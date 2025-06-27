@@ -3,43 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fagaz - Stock</title>
+  <title>Fagaz - Gestión de Stock</title>
   <link rel="manifest" href="../../public/manifest.json" />
   <link rel="stylesheet" href="../common/styles.css" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 </head>
-<body class="bg-[var(--background-light)]">
+<body class="bg-[var(--background-color)] text-[var(--text-primary)]">
   <div class="relative flex min-h-screen flex-col overflow-x-hidden">
     <header id="header"></header>
-    <main class="px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-8">
-      <div class="flex flex-col w-full max-w-3xl">
-        <h2 class="text-3xl font-bold mb-6">Stock de Pastillas</h2>
-        <div class="bg-white rounded-lg shadow p-6 border border-[var(--border-light)]">
-          <table class="w-full">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Depósito</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Stock Actual</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Ajuste Manual</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y">
-              <tr>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">Baigorria</td>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">2,500</td>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">
-                  <button class="btn-secondary rounded px-4 py-2 text-sm font-medium">Ajustar</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">Fagaz</td>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">3,800</td>
-                <td class="px-4 py-3 text-sm whitespace-nowrap">
-                  <button class="btn-secondary rounded px-4 py-2 text-sm font-medium">Ajustar</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <main class="flex-1 px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 py-4 sm:py-8">
+      <div class="w-full max-w-4xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-bold text-black mb-6">Gestión de Stock</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Stock Actual</h2>
+            <div id="stock-list" class="space-y-2">
+              <!-- El stock se renderizará aquí -->
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Añadir Stock</h2>
+            <form id="formAñadirStock" class="space-y-4">
+              <div>
+                <label for="deposito" class="label-text">Depósito</label>
+                <select id="deposito" class="input-field">
+                  <option value="Baigorria">Baigorria</option>
+                  <option value="Fagaz">Fagaz</option>
+                </select>
+              </div>
+              <div>
+                <label for="cantidad" class="label-text">Cantidad de Pastillas</label>
+                <input type="number" id="cantidad" class="input-field" min="1" required>
+              </div>
+              <button type="submit" class="btn-primary w-full rounded-lg mt-4">Añadir al Stock</button>
+            </form>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Quitar Stock</h2>
+            <form id="formQuitarStock" class="space-y-4">
+              <div>
+                <label for="depositoQuitar" class="label-text">Depósito</label>
+                <select id="depositoQuitar" class="input-field">
+                  <option value="Baigorria">Baigorria</option>
+                  <option value="Fagaz">Fagaz</option>
+                </select>
+              </div>
+              <div>
+                <label for="cantidadQuitar" class="label-text">Cantidad de Pastillas</label>
+                <input type="number" id="cantidadQuitar" class="input-field" min="1" required>
+              </div>
+              <button type="submit" class="btn-danger w-full rounded-lg mt-4">Quitar del Stock</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg mt-8">
+          <h2 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Historial de Uso de Pastillas</h2>
+          <div id="historial-stock" class="overflow-x-auto">
+            <!-- El historial de stock se renderizará aquí -->
+          </div>
         </div>
       </div>
     </main>
