@@ -122,7 +122,6 @@ btnRegistrar.addEventListener('click', async () => {
 
   const depositoSeleccionado = deposito.value;
 
-  // Descontar stock
   const { data: stockData, error: stockError } = await supabase
     .from('stock')
     .select('id, cantidad')
@@ -149,20 +148,19 @@ btnRegistrar.addEventListener('click', async () => {
     return;
   }
 
-  // Crear nuevo registro histórico
   const nuevoRegistro = {
     cliente: operacionActual.cliente,
-    mercaderia: operacionActual.mercaderia,
     area_tipo: operacionActual.area_tipo,
     silo: operacionActual.silo,
     celda: operacionActual.celda,
+    mercaderia: operacionActual.mercaderia,
+    estado: 'en curso',
     deposito: depositoSeleccionado,
-    tratamiento: tratamiento.value,
-    toneladas: toneladas,
     pastillas: pastillas,
     tipo_registro: 'pastillas',
-    estado: 'en curso',
     operario: operacionActual.operario,
+    tratamiento: tratamiento.value,
+    toneladas: toneladas,
     operacion_original_id: operacionActual.operacion_original_id || operacionActual.id,
   };
 
@@ -170,7 +168,6 @@ btnRegistrar.addEventListener('click', async () => {
 
   if (insertError) {
     alert('Error al guardar el registro de pastillas.');
-    // Revertir el descuento de stock si falla la inserción
     await supabase.from('stock').update({ cantidad: stockData.cantidad }).eq('id', stockData.id);
     return;
   }
@@ -180,7 +177,6 @@ btnRegistrar.addEventListener('click', async () => {
     .insert([{ tipo: 'uso', deposito: depositoSeleccionado, cantidad: pastillas }]);
 
   if (historyError) {
-    // No es un error crítico, solo loguear
     console.error('Error inserting stock history:', historyError);
   }
 

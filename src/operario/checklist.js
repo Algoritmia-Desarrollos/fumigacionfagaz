@@ -86,7 +86,7 @@ async function handleFileUpload(event, idx) {
 function updateProgress() {
   const checks = checklistItems.map((_, idx) => document.getElementById(`item${idx}`));
   const completados = checklistItems.filter((_, idx) => checks[idx].checked).length;
-  document.getElementById('progreso').innerHTML = `Progreso: <span class="font-bold text-[var(--secondary-color)]">${completados}/4</span>`;
+  document.getElementById('progreso').innerHTML = `Progreso: <span class="font-bold">${completados}/4</span>`;
   document.getElementById('progressBar').style.width = `${(completados / 4) * 100}%`;
   btnContinuar.disabled = false;
   document.getElementById('checklistMsg').textContent = completados === 4 ? 'Checklist completo. Puede continuar.' : 'Puede continuar aunque no haya completado todos los ítems.';

@@ -7,9 +7,6 @@ DROP TABLE IF EXISTS clientes;
 DROP TABLE IF EXISTS mercaderias;
 DROP TABLE IF EXISTS areas;
 
-
-
-
 -- Crear la tabla de operaciones
 CREATE TABLE operaciones (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
