@@ -26,29 +26,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  // Obtener los registros en curso con el mismo cliente, tipo de área y silo/celda para calcular el total de pastillas
+  // Usar la misma lógica que en home.js para asegurar consistencia
   const { data: historial, error: historialError } = await supabase
     .from('operaciones')
     .select('pastillas')
     .eq('cliente', op.cliente)
     .eq('area_tipo', op.area_tipo)
-    .eq(op.area_tipo === 'silo' ? 'silo' : 'celda', op.area_tipo === 'silo' ? op.silo : op.celda);
+    .eq(op.area_tipo === 'silo' ? 'silo' : 'celda', op.area_tipo === 'silo' ? op.silo : op.celda)
+    .neq('estado', 'finalizada'); // Excluir operaciones finalizadas
 
+  let totalPastillas = 0;
   if (historialError) {
-    alert('Error al obtener el historial de la operación.');
+    alert('Error al obtener los datos de pastillas de la operación.');
     console.error(historialError);
-    return;
+    // Usar el valor de pastillas de la operación actual como respaldo
+    totalPastillas = op.pastillas || 0;
+  } else {
+    totalPastillas = historial.reduce((acc, o) => acc + (o.pastillas || 0), 0);
   }
 
-  const totalPastillas = historial.reduce((acc, o) => acc + (o.pastillas || 0), 0);
-
   // Mostrar datos principales
+  const totalPastillasValue = totalPastillas; // Guardar el valor para usarlo después
   document.getElementById('cliente').textContent = op.cliente || '---';
   document.getElementById('mercaderia').textContent = op.mercaderia ? op.mercaderia.charAt(0).toUpperCase() + op.mercaderia.slice(1) : '-';
-  document.getElementById('deposito').textContent = op.deposito || '---';
   document.getElementById('area').textContent = op.silo || op.celda || '---';
-  document.getElementById('pastillas').textContent = totalPastillas;
+  document.getElementById('tratamiento').textContent = op.tratamiento || '---';
+  document.getElementById('toneladas').textContent = op.toneladas || '0';
   document.getElementById('fechaInicio').textContent = new Date(op.created_at).toLocaleString('es-AR');
   document.getElementById('fechaCierre').textContent = new Date().toLocaleString('es-AR');
+  document.getElementById('pastillas').textContent = totalPastillasValue;
 
   const checklist = op.checklist_items || [];
   const resumen = document.getElementById('checklistResumen');
@@ -64,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       btnConfirmar.addEventListener('click', async () => {
         if (confirm('¿Está seguro de que desea finalizar esta operación? Esta acción no se puede deshacer.')) {
           // Marcar como finalizadas todas las operaciones en curso con el mismo cliente, tipo de área y silo/celda
-          const { error: updateError } = await supabase
+        const { error: updateError } = await supabase
           .from('operaciones')
           .update({ estado: 'finalizada' })
           .eq('cliente', op.cliente)
@@ -77,6 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           console.error(updateError);
           return;
         }
+
+        // No eliminar registros de pastillas asociadas, se mantienen como evidencia
 
         // Crear nuevo registro histórico de finalización
         const nuevoRegistro = {
