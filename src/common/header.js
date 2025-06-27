@@ -33,7 +33,6 @@ export function renderHeader() {
         <a class="${getLinkClasses('dashboard.html')}" href="dashboard.html">Dashboard</a>
         <a class="${getLinkClasses('stock.html')}" href="stock.html">Stock</a>
         <a class="${getLinkClasses('gestion.html')}" href="gestion.html">Gestión</a>
-        <a class="${getLinkClasses('reportes.html')}" href="reportes.html">Reportes</a>
     `;
   } else if (user?.role === 'operario') {
     navLinks = `
@@ -47,8 +46,8 @@ export function renderHeader() {
   return `
     <header class="flex items-center justify-between border-b border-[var(--border-color)] px-6 md:px-10 py-4 bg-white shadow-sm relative">
       <div class="flex items-center gap-3">
-        <img src="/public/assets/img/logotipo (1).png" alt="Fagaz Logo" class="h-10">
-        <h1 class="text-xl font-bold">Fagaz Servicios</h1>
+        <img src="/public/assets/img/logotipo (1).png" alt="Fagaz Logo" class="h-12">
+        <h1 class="text-xl font-bold">Gestión Fumigación</h1>
       </div>
       <nav class="hidden md:flex items-center gap-6" id="mainNav">
         ${navLinks}
