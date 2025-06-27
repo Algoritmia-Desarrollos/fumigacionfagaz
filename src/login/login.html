@@ -33,7 +33,7 @@
     
     .input-field {
       width: 100%;
-      padding: 12px 16px 12px 48px;
+      padding: 12px 16px;
       border: 2px solid #e5e7eb;
       border-radius: 12px;
       font-size: 16px;
@@ -52,18 +52,7 @@
       border-color: var(--primary-color);
     }
     
-    .input-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-      transition: color 0.3s ease;
-    }
-    
-    .input-field:focus + .input-icon {
-      color: var(--primary-color);
-    }
+    /* Iconos eliminados por solicitud del usuario */
     
     .btn-primary {
       background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
@@ -181,7 +170,6 @@
             required
             autocomplete="email"
           >
-          <span class="material-icons input-icon">email</span>
         </div>
         
         <div class="input-group">
@@ -194,7 +182,6 @@
             required
             autocomplete="current-password"
           >
-          <span class="material-icons input-icon">lock</span>
         </div>
         
         <button type="submit" id="loginBtn" class="w-full btn-primary">
