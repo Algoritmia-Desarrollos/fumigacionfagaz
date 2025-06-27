@@ -3,27 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fagaz - Login</title>
-  <link rel="manifest" href="../../public/manifest.json" />
+  <title>Fagaz - Iniciar Sesión</title>
   <link rel="stylesheet" href="../common/styles.css" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    :root {
+      --primary-color: #53d22c;
+      --text-primary: #121a0f;
+      --background-color: #f9fbf9;
+    }
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+  </style>
 </head>
-<body class="bg-[var(--background-color)] flex items-center justify-center min-h-screen">
-  <main class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-    <h1 class="text-2xl font-bold mb-6 text-center text-[var(--primary-color)]">Fagaz Servicios</h1>
-    <form id="loginForm" class="space-y-6">
-      <div>
-        <label class="block text-sm font-medium text-[var(--text-secondary)] mb-1" for="email">Email</label>
-        <input class="input-field" type="email" id="email" name="email" required />
+<body class="bg-[var(--background-color)]">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+      <div class="text-center mb-8">
+        <img src="/public/assets/img/logotipo (1).png" alt="Fagaz Logo" class="mx-auto h-16 mb-4">
+        <h1 class="text-2xl font-bold text-[var(--text-primary)]">Fagaz Servicios</h1>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-[var(--text-secondary)] mb-1" for="password">Contraseña</label>
-        <input class="input-field" type="password" id="password" name="password" required />
-      </div>
-      <button class="btn-primary w-full rounded-lg h-12 text-base font-bold" type="submit">Ingresar</button>
-    </form>
-    <p id="loginError" class="text-red-600 text-sm mt-4 hidden text-center"></p>
-  </main>
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" class="input-field mt-1" required>
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+          <input type="password" id="password" class="input-field mt-1" required>
+        </div>
+        <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">Ingresar</button>
+      </form>
+    </div>
+  </div>
   <script type="module" src="login.js"></script>
 </body>
 </html>
