@@ -60,19 +60,25 @@ async function renderResumen() {
   document.getElementById('resumen-tratamiento').textContent = operacionActual.tratamiento || 'N/A';
   document.getElementById('resumen-toneladas').textContent = operacionActual.toneladas || 'N/A';
   
-  // Calcular el total de pastillas usadas hasta el momento del registro
-  const operacionIdReferencia = operacionActual.operacion_original_id || operacionActual.id;
-  const { data: registrosPastillas, error } = await supabase
-    .from('operaciones')
-    .select('pastillas')
-    .eq('operacion_original_id', operacionIdReferencia)
-    .eq('tipo_registro', 'pastillas');
-
+  // Calcular el total de pastillas usadas hasta la finalización de esta operación
   let totalPastillas = 0;
-  if (error) {
-    console.error('Error cargando registros de pastillas:', error);
+  if (operacionActual.estado === 'finalizada') {
+    const operacionIdReferencia = operacionActual.operacion_original_id || operacionActual.id;
+    const { data: registrosPastillas, error } = await supabase
+      .from('operaciones')
+      .select('pastillas, created_at')
+      .eq('operacion_original_id', operacionIdReferencia)
+      .eq('tipo_registro', 'pastillas')
+      .lte('created_at', operacionActual.updated_at || operacionActual.created_at);
+
+    if (error) {
+      console.error('Error cargando registros de pastillas:', error);
+      totalPastillas = operacionActual.pastillas || 0;
+    } else {
+      totalPastillas = registrosPastillas.reduce((sum, registro) => sum + (registro.pastillas || 0), 0);
+    }
   } else {
-    totalPastillas = registrosPastillas.reduce((sum, registro) => sum + (registro.pastillas || 0), 0);
+    totalPastillas = operacionActual.pastillas || 0;
   }
   document.getElementById('resumen-pastillas').textContent = totalPastillas || 'N/A';
   
@@ -124,6 +130,23 @@ btnCancelar.addEventListener('click', () => {
 
 btnVolver.addEventListener('click', () => {
   window.location.href = 'dashboard.html';
+});
+
+btnEliminar.addEventListener('click', async () => {
+  if (confirm('¿Está seguro de que desea eliminar esta operación? Esta acción no se puede deshacer.')) {
+    const { error } = await supabase
+      .from('operaciones')
+      .delete()
+      .eq('id', operacionId);
+
+    if (error) {
+      console.error('Error eliminando la operación:', error);
+      alert('No se pudo eliminar la operación.');
+    } else {
+      alert('Operación eliminada correctamente.');
+      window.location.href = 'dashboard.html';
+    }
+  }
 });
 
 formOperacion.addEventListener('submit', async (e) => {

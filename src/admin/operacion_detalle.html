@@ -16,14 +16,18 @@
       <div class="w-full max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-6">
           <h1 class="text-3xl sm:text-4xl font-bold text-black">Detalle de Operación</h1>
-          <div>
-            <button id="btnVolver" class="btn-secondary rounded-lg px-4 py-2 flex items-center gap-2 mr-4">
+          <div class="flex gap-2">
+            <button id="btnVolver" class="btn-secondary rounded-lg px-4 py-2 flex items-center gap-2">
               <span class="material-icons">arrow_back</span>
               <span>Volver</span>
             </button>
             <button id="btnHabilitarEdicion" class="btn-primary rounded-lg px-4 py-2 flex items-center gap-2">
               <span class="material-icons">edit</span>
               <span>Editar</span>
+            </button>
+            <button id="btnEliminar" class="btn-danger rounded-lg px-4 py-2 flex items-center gap-2 text-red-500 hover:text-red-700">
+              <span class="material-icons">delete</span>
+              <span>Eliminar</span>
             </button>
           </div>
         </div>
@@ -60,7 +64,7 @@
                   <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-toneladas"></td>
                 </tr>
                 <tr>
-                  <td class="py-2 px-4 border-b font-medium">Pastillas Usadas Hasta el Momento</td>
+                  <td class="py-2 px-4 border-b font-medium">Pastillas Usadas</td>
                   <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-pastillas"></td>
                 </tr>
                 <tr>
