@@ -49,20 +49,36 @@ async function cargarOperacion() {
     operacionActual.checklist_items = checklistData;
   }
 
-  renderResumen();
+  await renderResumen();
   renderFormulario();
 }
 
-function renderResumen() {
-  document.getElementById('resumen-operario').textContent = operacionActual.operario || 'N/A';
+async function renderResumen() {
   document.getElementById('resumen-cliente').textContent = operacionActual.cliente || 'N/A';
-  document.getElementById('resumen-deposito').textContent = operacionActual.deposito || 'N/A';
   document.getElementById('resumen-area').textContent = operacionActual.silo || operacionActual.celda || 'N/A';
   document.getElementById('resumen-mercaderia').textContent = operacionActual.mercaderia || 'N/A';
   document.getElementById('resumen-tratamiento').textContent = operacionActual.tratamiento || 'N/A';
   document.getElementById('resumen-toneladas').textContent = operacionActual.toneladas || 'N/A';
-  document.getElementById('resumen-pastillas').textContent = operacionActual.pastillas || 'N/A';
+  
+  // Calcular el total de pastillas usadas hasta el momento del registro
+  const operacionIdReferencia = operacionActual.operacion_original_id || operacionActual.id;
+  const { data: registrosPastillas, error } = await supabase
+    .from('operaciones')
+    .select('pastillas')
+    .eq('operacion_original_id', operacionIdReferencia)
+    .eq('tipo_registro', 'pastillas');
+
+  let totalPastillas = 0;
+  if (error) {
+    console.error('Error cargando registros de pastillas:', error);
+  } else {
+    totalPastillas = registrosPastillas.reduce((sum, registro) => sum + (registro.pastillas || 0), 0);
+  }
+  document.getElementById('resumen-pastillas').textContent = totalPastillas || 'N/A';
+  
   document.getElementById('resumen-estado').textContent = operacionActual.estado || 'N/A';
+  document.getElementById('resumen-fechaInicio').textContent = operacionActual.created_at ? new Date(operacionActual.created_at).toLocaleString('es-AR') : 'N/A';
+  document.getElementById('resumen-fechaCierre').textContent = operacionActual.estado === 'finalizada' && operacionActual.updated_at ? new Date(operacionActual.updated_at).toLocaleString('es-AR') : 'Pendiente';
 
   const checklistHtml = (operacionActual.checklist_items || []).map(item => `
     <div class="flex justify-between items-center p-3 border-b">

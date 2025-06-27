@@ -30,43 +30,53 @@
 
         <!-- Vista de Resumen -->
         <div id="resumenOperacion" class="bg-white p-8 rounded-xl shadow-lg space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            <div class="flex flex-col">
-              <span class="label-text">Operario</span>
-              <span id="resumen-operario" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Cliente</span>
-              <span id="resumen-cliente" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Depósito</span>
-              <span id="resumen-deposito" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Área</span>
-              <span id="resumen-area" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Mercadería</span>
-              <span id="resumen-mercaderia" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Tratamiento</span>
-              <span id="resumen-tratamiento" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Toneladas</span>
-              <span id="resumen-toneladas" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Pastillas</span>
-              <span id="resumen-pastillas" class="font-semibold text-lg"></span>
-            </div>
-            <div class="flex flex-col">
-              <span class="label-text">Estado</span>
-              <span id="resumen-estado" class="font-semibold text-lg"></span>
-            </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="py-2 px-4 border-b text-left">Campo</th>
+                  <th class="py-2 px-4 border-b text-left">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Cliente</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-cliente"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Área</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-area"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Mercadería</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-mercaderia"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Tratamiento</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-tratamiento"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Toneladas</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-toneladas"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Pastillas Usadas Hasta el Momento</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-pastillas"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Estado</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-estado"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Fecha de Inicio</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-fechaInicio"></td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4 border-b font-medium">Fecha de Cierre</td>
+                  <td class="py-2 px-4 border-b font-semibold text-lg" id="resumen-fechaCierre"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div class="border-t pt-6">
             <h3 class="text-xl font-bold mb-4">Checklist y Evidencias</h3>
